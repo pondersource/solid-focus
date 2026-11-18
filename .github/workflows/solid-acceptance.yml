@@ -1,0 +1,43 @@
+name: Solid production acceptance
+on:
+  pull_request:
+  push:
+    branches: [solid-production-acceptance]
+permissions:
+  contents: read
+jobs:
+  tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pondersource/data-modules
+          ref: 793054e300c93c566ac778b91cb80a70498240ae
+          path: shared-data-modules
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+      - run: npm run build
+        env:
+          FOCUS_BASE_URL: http://localhost:5001
+      - run: npm install --prefix acceptance --no-package-lock
+      - run: npx --prefix acceptance playwright install --with-deps chromium
+      - run: npm install --ignore-scripts --no-audit --no-fund --no-package-lock
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npx tsc -p tsconfig.json --typeRoots ./node_modules/@types
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npm --prefix acceptance test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: focus-playwright-results
+          path: acceptance/test-results/

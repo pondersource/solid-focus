@@ -16,7 +16,7 @@ export default defineConfig({
         Aerogel({
             name: 'Focus',
             description: 'Your distraction-free Task Manager',
-            baseUrl: 'https://focus.noeldemartin.com',
+            baseUrl: process.env.FOCUS_BASE_URL ?? 'https://focus.pondersource.com',
             themeColor: '#0ea5e9',
             icons: {
                 '192x192': 'android-chrome-192x192.png',
