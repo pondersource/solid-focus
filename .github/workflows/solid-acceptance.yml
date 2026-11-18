@@ -1,0 +1,130 @@
+name: Solid production acceptance
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pondersource/data-modules
+          ref: 793054e300c93c566ac778b91cb80a70498240ae
+          path: shared-data-modules
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+      - run: npm run build
+        env:
+          FOCUS_BASE_URL: http://localhost:5001
+      - run: npm install --prefix acceptance --no-package-lock
+      - run: npm install --prefix "$RUNNER_TEMP/focus-css" --no-package-lock --no-audit @solid/community-server@5.1.0
+      - run: npx --prefix acceptance playwright install --with-deps chromium
+      - run: npm install --ignore-scripts --no-audit --no-fund --no-package-lock
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npx tsc -p tsconfig.json --typeRoots ./node_modules/@types
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npm --prefix acceptance test
+      - run: npm run build
+        env:
+          FOCUS_BASE_URL: https://focus.pondersource.com
+      - run: |
+          printf '%s\n' focus.pondersource.com > dist/CNAME
+          touch dist/.nojekyll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focus-production
+          path: dist/
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: focus-playwright-results
+          path: acceptance/test-results/
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: tasks
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: focus-production
+          path: site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
+        id: deployment
+
+  live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pondersource/data-modules
+          ref: 793054e300c93c566ac778b91cb80a70498240ae
+          path: shared-data-modules
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix acceptance --no-package-lock
+      - run: npm install --prefix "$RUNNER_TEMP/focus-css" --no-package-lock --no-audit @solid/community-server@5.1.0
+      - run: npx --prefix acceptance playwright install --with-deps chromium
+      - run: npm install --ignore-scripts --no-audit --no-fund --no-package-lock
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npx tsc -p tsconfig.json --typeRoots ./node_modules/@types
+        working-directory: shared-data-modules/tasks/vanilla
+      - run: npm --prefix acceptance test
+        env:
+          FOCUS_TEST_URL: https://focus.pondersource.com
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: focus-live-playwright-results
+          path: acceptance/test-results/
+
+  publication-status:
+    if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [tasks, deploy, live]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Report verified publication result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TASKS_RESULT: ${{ needs.tasks.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          LIVE_RESULT: ${{ needs.live.result }}
+        run: |
+          state=failure
+          description="Publication incomplete; inspect build, deploy and live checks"
+          if [ "$TASKS_RESULT" = success ] && [ "$DEPLOY_RESULT" = success ] && [ "$LIVE_RESULT" = success ]; then
+            state=success
+            description="Production deployed and real Pod acceptance passed at public origin"
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state="$state" -f context="Focus verified publication" -f description="$description" \
+            -f target_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > /dev/null
