@@ -7,7 +7,7 @@ const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
 async function connect(page, register = false) {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Log in', exact: true }).click();
+    await page.getByRole('button', { name: 'Log in', exact: true }).first().click();
     const login = page.getByLabel('Login url', { exact: true });
     await login.fill(pod);
     await login.press('Enter');
