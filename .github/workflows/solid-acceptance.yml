@@ -104,3 +104,27 @@ jobs:
         with:
           name: focus-live-playwright-results
           path: acceptance/test-results/
+
+  publication-status:
+    if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [tasks, deploy, live]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Report verified publication result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TASKS_RESULT: ${{ needs.tasks.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          LIVE_RESULT: ${{ needs.live.result }}
+        run: |
+          state=failure
+          description="Publication incomplete; inspect build, deploy and live checks"
+          if [ "$TASKS_RESULT" = success ] && [ "$DEPLOY_RESULT" = success ] && [ "$LIVE_RESULT" = success ]; then
+            state=success
+            description="Production deployed and real Pod acceptance passed at public origin"
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state="$state" -f context="Focus verified publication" -f description="$description" \
+            -f target_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > /dev/null
