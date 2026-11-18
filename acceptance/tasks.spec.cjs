@@ -46,6 +46,11 @@ function expand(quads) {
 }
 
 test('creates and updates a private task, then recovers it from the Pod in a fresh browser', async ({ page, browser, request, baseURL }) => {
+    page.on('response', response => {
+        if (response.url().startsWith(pod + 'tasks/') && ['PUT', 'PATCH', 'POST'].includes(response.request().method())) {
+            console.log('Pod write', response.request().method(), response.url(), response.status());
+        }
+    });
     await connect(page, true);
     const write = page.waitForResponse(response =>
         response.ok() && response.url().startsWith(pod + 'tasks/') &&
@@ -56,7 +61,10 @@ test('creates and updates a private task, then recovers it from the Pod in a fre
     await page.getByLabel('Task name', { exact: true }).fill(title);
     await page.getByLabel('Task name', { exact: true }).press('Enter');
     const saved = await write;
-    const taskUrl = new URL(saved.headers().location || saved.url(), saved.url()).href;
+    const taskDocument = new URL(saved.headers().location || saved.url(), saved.url());
+    taskDocument.hash = '';
+    const taskUrl = taskDocument.href;
+    console.log('Created task document', taskUrl);
     expect(taskUrl.endsWith('/')).toBeFalsy();
     expect([401, 403, 404]).toContain((await request.get(taskUrl)).status());
 
