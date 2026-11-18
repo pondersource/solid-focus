@@ -6,11 +6,12 @@ import I18n from '@intlify/unplugin-vue-i18n/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import RekaResolver from 'reka-ui/resolver';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 
 export default defineConfig({
     build: { sourcemap: true },
+    test: { exclude: [...configDefaults.exclude, 'acceptance/**', 'shared-data-modules/**'] },
     publicDir: fileURLToPath(new URL('./src/assets/public/', import.meta.url)),
     plugins: [
         Aerogel({
