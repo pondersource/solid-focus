@@ -68,17 +68,20 @@ test('creates and updates a private task, then recovers it from the Pod in a fre
     expect(taskUrl.endsWith('/')).toBeFalsy();
     expect([401, 403, 404]).toContain((await request.get(taskUrl)).status());
 
+    await expect(page.getByText('Online', { exact: true })).toBeAttached({ timeout: 30_000 });
     await page.getByLabel(new RegExp('Select task.*' + title)).click();
     const priorityWrite = page.waitForResponse(response =>
         response.url() === taskUrl && response.request().method() === 'PATCH' && response.ok(),
     );
     await page.getByLabel('Make important', { exact: true }).click();
     await priorityWrite;
+    await expect(page.getByText('Online', { exact: true })).toBeAttached({ timeout: 30_000 });
     const completionWrite = page.waitForResponse(response =>
         response.url() === taskUrl && response.request().method() === 'PATCH' && response.ok(),
     );
     await page.getByRole('listitem').filter({ hasText: title }).getByRole('checkbox').check();
     await completionWrite;
+    await expect(page.getByText('Online', { exact: true })).toBeAttached({ timeout: 30_000 });
 
     const fresh = await browser.newContext({ baseURL });
     try {
