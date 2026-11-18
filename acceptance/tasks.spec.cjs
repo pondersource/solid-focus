@@ -2,10 +2,14 @@ const { test, expect } = require('@playwright/test');
 const { Parser } = require('n3');
 const pod = 'http://localhost:4000/alice/';
 const title = 'Focus Playwright task';
+const appUrl = process.env.FOCUS_TEST_URL || 'http://localhost:5001';
 const schema = 'https://schema.org/';
 const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
 async function connect(page, register = false) {
+    if (process.env.FOCUS_TEST_URL) {
+        await page.context().grantPermissions(['local-network-access'], { origin: new URL(appUrl).origin });
+    }
     await page.goto('/');
     await page.getByRole('button', { name: 'Log in', exact: true }).first().click();
     const login = page.getByLabel('Login url', { exact: true });
@@ -24,7 +28,7 @@ async function connect(page, register = false) {
     await page.locator('#password').fill('focus-ci-password');
     await page.getByRole('button', { name: 'Log in', exact: true }).click();
     await page.getByRole('button', { name: /authorize|consent/i }).click();
-    await expect(page).toHaveURL(/^http:\/\/localhost:5001\//);
+    await expect(page).toHaveURL(url => url.origin === new URL(appUrl).origin);
     await expect(page.getByLabel('Task name', { exact: true })).toBeVisible();
 }
 
