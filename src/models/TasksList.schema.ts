@@ -1,9 +1,7 @@
-import { defineSolidContainerSchema, solidContainerFields } from 'soukai-solid';
+import { defineSolidContainerSchema } from 'soukai-solid';
 
-export const tasksListFields = solidContainerFields;
+import { focusSchemas } from '@/storage/formats';
 
-export default defineSolidContainerSchema({
-    fields: tasksListFields,
-    history: true,
-    timestamps: true,
-});
+export const tasksListFields = focusSchemas.list.fields;
+
+export default defineSolidContainerSchema(focusSchemas.list);

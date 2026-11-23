@@ -6,17 +6,19 @@ import I18n from '@intlify/unplugin-vue-i18n/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import RekaResolver from 'reka-ui/resolver';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 
 export default defineConfig({
+    base: process.env.VITE_BASE_PATH || '/',
     build: { sourcemap: true },
+    test: { exclude: [...configDefaults.exclude, 'acceptance/**'] },
     publicDir: fileURLToPath(new URL('./src/assets/public/', import.meta.url)),
     plugins: [
         Aerogel({
             name: 'Focus',
             description: 'Your distraction-free Task Manager',
-            baseUrl: 'https://focus.noeldemartin.com',
+            baseUrl: 'https://focus.pondersource.com',
             themeColor: '#0ea5e9',
             icons: {
                 '192x192': 'android-chrome-192x192.png',

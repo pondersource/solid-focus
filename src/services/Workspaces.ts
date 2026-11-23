@@ -69,7 +69,9 @@ export class WorkspacesService extends Service {
 
         const user = Solid.user;
 
-        if (!user?.usedLegacyApp) {
+        // Native TaskGroup documents, rather than a historical trusted-app profile flag,
+        // determine whether this storage needs the original schema migration.
+        if (!user) {
             this.usingLegacySchemas = false;
 
             return;

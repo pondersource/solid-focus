@@ -1,0 +1,31 @@
+{
+  "core": {
+    "status": "merged fork source build; not an npm release",
+    "repository": "https://github.com/pondersource/remotestorage.js",
+    "baseCommit": "2517fe04cd66f27c430ec451167efd6b0c73393d",
+    "build": "npm ci && npm run build:all",
+    "artifacts": {
+      "remotestorage-all.js": "b38d6acff0ad303b0ec484e52781a528c3bbd21cea4efce3f51013d440e88030",
+      "remotestorage-all.js.map": "f8f60115de3efd6e75c8405fc382a8de7f7777d799c87ce03acba17384b478fd",
+      "remotestorage-all.js.LICENSE.txt": "6195b4dad315ff229e5ade11dcbdc157538c0fd5401d66df4d9748532e38fa86"
+    }
+  },
+  "widget": {
+    "status": "merged fork source build; not an npm release",
+    "repository": "https://github.com/pondersource/remotestorage-widget",
+    "baseCommit": "18a22cf75e54bef68620c7e6968b38fc3e4c20bf",
+    "build": "npm ci && npm run build",
+    "artifacts": {
+      "widget.js": "ba56426df06e42c218cde6f3e2d108229d1c18f190c078aa424c50d4960ed417",
+      "widget.js.map": "18ecfd124f426d6efcd49c243ce5011afc092c4918d27bf58a494e73f0225979",
+      "widget.js.LICENSE.txt": "8c9946dfc859a2bfb26cc541125631cd96e7110fa20a702eb19275c9d1658805"
+    }
+  },
+  "modules": {
+    "status": "merged fork source build",
+    "repository": "https://github.com/pondersource/data-modules",
+    "baseCommit": "37f12156be89128f7bdb0f21471d680ede977b52",
+    "artifact": "domains.js",
+    "sha256": "952662ba9b9ffbc90a2f31006590e684beb48499bb5e095c405920ba3888ea9f"
+  }
+}

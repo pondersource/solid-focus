@@ -6,6 +6,30 @@
 
 Focus, your distraction-free Task Manager.
 
+This Ponder Source fork follows [NoelDeMartin/solid-focus](https://github.com/NoelDeMartin/solid-focus),
+currently based on upstream `ecdef05e5d267e81c12a04e20f7ff6e2a5cfb783` (v0.3.4).
+The shared remoteStorage widget handles connection; the Tasks data module owns
+the native Solid schemas and document operations, including list/workspace
+documents and task history. Source revisions and exact vendored artifact hashes
+are recorded in `src/assets/public/storage/vendor.json`.
+
+Guest projects stay local. Before opening Nextgraph, use **Export guest data**
+and keep the file. The app archive includes complete guest JSON-LD documents,
+their identifiers and history; it does not export cached remote accounts. Import
+accepts an empty workspace or an identical partial import and never overwrites
+changed projects. A failed import retains successful inserts for retry. Select
+**Back up now** after import to choose the destination and start the existing
+cloud synchronization flow. Local import does not establish server delivery.
+Stop editing in other tabs while exporting or importing. The archive limit is
+100 MiB; retain the original file until remote recovery is verified.
+
+Develop with Node 24 and pnpm 11.25.0. Run `pnpm test:ci`, `pnpm lint` and
+`pnpm build`; `pnpm test:acceptance` adds actual CSS sign-in/native document
+checks and a complete guest archive transfer through a fresh browser context.
+Those checks do not simulate or certify native Nextgraph wallet consent or
+broker replication. This fork's production backend acceptance remains separate
+from the native Solid document tests.
+
 - 📗 Organize your tasks into workspaces and lists.
 - 📱 Use it completely offline (it's a local-first PWA!).
 - 🎨 Clean and minimalistic design to help you _focus_.

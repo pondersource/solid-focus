@@ -1,7 +1,7 @@
 <template>
     <div class="flex-1">
         <div
-            class="fixed top-1 right-0 bottom-0 left-0 z-10 flex"
+            class="fixed top-1 right-0 bottom-(--storage-control-height) left-0 z-10 flex"
             :class="{ 'pointer-events-none': $ui.desktop || !$workspaces.sidebar }"
         >
             <div

@@ -1,4 +1,4 @@
-import { podUrl, webId } from '@aerogel/cypress';
+import { podUrl } from '@aerogel/cypress';
 
 describe('Interoperability', () => {
 
@@ -20,8 +20,7 @@ describe('Interoperability', () => {
 
         // Act - Log in & postpone migration
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.waitSync();
 
         cy.press('not yet');
@@ -103,8 +102,7 @@ describe('Interoperability', () => {
         cy.intercept('PATCH', podUrl('/settings/privateTypeIndex')).as('registerWorkspace');
 
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.waitSync();
 
         cy.press('not yet');
@@ -159,8 +157,7 @@ describe('Interoperability', () => {
 
         // Act
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Assert
         cy.see('Synchronization in progress');
@@ -187,8 +184,7 @@ describe('Interoperability', () => {
 
         // Act
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Assert
         cy.see('Synchronization in progress');
@@ -203,8 +199,7 @@ describe('Interoperability', () => {
         cy.solidUpdateDocument('/profile/card', 'sparql/prepare-legacy-profile.sparql');
 
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.waitSync();
 
         cy.intercept('PATCH', podUrl('/tasks/legacy-task')).as('updateTask');
@@ -240,8 +235,7 @@ describe('Interoperability', () => {
 
         // Arrange - Log in
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.waitSync();
 
         cy.press('not yet');

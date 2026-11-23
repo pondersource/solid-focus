@@ -6,6 +6,17 @@
 @import './helpers.css' layer(base);
 @import './reset.css' layer(base);
 
+:root {
+    --storage-control-height: 0px;
+}
+
+/* Reserve real layout space for the compact widget, including on small screens. */
+#storage-widget {
+    position: static !important;
+    flex: none;
+    align-self: flex-end;
+}
+
 @theme {
     --font-*: initial;
     --font-onest: 'Onest', sans-serif;

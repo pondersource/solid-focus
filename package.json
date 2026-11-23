@@ -1,15 +1,15 @@
 {
     "name": "solid-focus",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "private": true,
     "type": "module",
-    "repository": "github:noeldemartin/solid-focus",
+    "repository": "github:pondersource/solid-focus",
     "scripts": {
         "build": "vite build",
         "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
         "cy:open": "cypress open --config-file ./cypress/cypress.config.ts --e2e --browser chromium",
         "cy:run": "cypress run --config-file ./cypress/cypress.config.ts",
-        "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:3000 cy:run",
+        "cy:test": "start-server-and-test test:serve-app http-get://127.0.0.1:5001 test:serve-pod http-get://localhost:3000 cy:run",
         "cy:test-snapshots": "docker run -it -u `id -u ${whoami}` -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
         "cy:test-snapshots:ci": "docker run -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
         "dev": "vite",
@@ -17,8 +17,10 @@
         "lint": "noeldemartin-lint src cypress",
         "test": "vitest --run",
         "test:ci": "vitest --run --reporter verbose",
-        "test:serve-app": "vite --port 5001 --mode testing",
-        "test:serve-pod": "community-solid-server -l warn"
+        "test:serve-app": "VITE_BASE_PATH=/ vite --host 127.0.0.1 --port 5001 --mode testing",
+        "test:serve-pod": "community-solid-server -l warn",
+        "test:native": "vitest --run src/storage/tasks.native.test.ts",
+        "test:acceptance": "playwright test --config acceptance/playwright.config.cjs"
     },
     "dependencies": {
         "@aerogel/core": "0.1.2",
@@ -44,14 +46,15 @@
         "vue-router": "^4.5.0"
     },
     "devDependencies": {
-        "@aerogel/cli": "next",
-        "@aerogel/cypress": "next",
-        "@aerogel/vite": "next",
+        "@aerogel/cli": "0.1.2-next.0532ffc3845be5e86d770e8e823f5216ef34dfbf",
+        "@aerogel/cypress": "0.1.2-next.0532ffc3845be5e86d770e8e823f5216ef34dfbf",
+        "@aerogel/vite": "0.1.2-next.0532ffc3845be5e86d770e8e823f5216ef34dfbf",
         "@iconify/json": "2.2.340",
-        "@noeldemartin/eslint-config-vue": "next",
+        "@noeldemartin/eslint-config-vue": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
         "@noeldemartin/eslint-plugin": "^0.1.0",
-        "@noeldemartin/scripts": "next",
-        "@solid/community-server": "^7.1.6",
+        "@noeldemartin/scripts": "0.3.0-next.106c7a107624952bbd18be58bde651adcc7afb64",
+        "@playwright/test": "1.65.1",
+        "@solid/community-server": "7.3.0",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node22": "^22.0.1",
         "@types/node": "^20.3.1",

@@ -12,7 +12,9 @@
             </h2>
 
             <div class="mt-4 flex flex-col items-center gap-y-2">
-                <SolidLogin no-loading allow-legacy-authenticator layout="vertical" />
+                <Button @click="openStorage()">
+                    Connect storage
+                </Button>
                 <Button
                     variant="ghost"
                     class="mx-auto self-center px-3.5 py-2.5 text-sm font-semibold"
@@ -25,3 +27,7 @@
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { openStorage } from '@/storage';
+</script>
