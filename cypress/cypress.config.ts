@@ -3,7 +3,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
     e2e: {
-        baseUrl: 'http://localhost:5001',
+        baseUrl: 'http://127.0.0.1:5001',
         video: false,
         scrollBehavior: false,
         retries: {
