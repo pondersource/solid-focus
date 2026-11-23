@@ -14,8 +14,12 @@ describe('Cloud', () => {
         // Arrange
         cy.press('Log in');
         cy.connectSolidStorage();
+        cy.intercept('PATCH', podUrl('/tasks/main/*')).as('initialTask');
         cy.ariaInput('Task name').type('Sync updates{enter}');
         cy.waitSync();
+        // The new connection also synchronizes profile/type-index metadata.
+        // Wait for this task's own initial write before recording later edits.
+        cy.wait('@initialTask').its('response.statusCode').should('eq', 201);
 
         cy.intercept('PATCH', podUrl('/tasks/main/*')).as('updateTask');
 
@@ -54,8 +58,12 @@ describe('Cloud', () => {
         // Arrange
         cy.press('Log in');
         cy.connectSolidStorage();
+        cy.intercept('PATCH', podUrl('/tasks/main/*')).as('initialTask');
         cy.ariaInput('Task name').type('To delete{enter}');
         cy.waitSync();
+        // The new connection also synchronizes profile/type-index metadata.
+        // Wait for this task's own initial write before recording later edits.
+        cy.wait('@initialTask').its('response.statusCode').should('eq', 201);
 
         cy.model('Workspace').then(async (Workspace) => {
             const main = await Workspace.find(podUrl('/tasks/main/'));
