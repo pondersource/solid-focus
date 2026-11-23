@@ -55,11 +55,27 @@ export const storage = runtime.PonderSourceDomains.connectApp(runtime.PonderSour
 });
 runtime.ponderStorage = storage;
 
+const CONNECTION_INTENT = 'solid-focus:storage-connection-requested';
+let restoringConnection = true;
+const shouldRestoreAccount = () => Solid.autoReconnect || sessionStorage.getItem(CONNECTION_INTENT) === 'true';
+
 // The upstream task/sidebar panels are fixed to the viewport. Keep their lower
 // edge above the widget's real layout area as its state and size change.
 const storageHost = document.getElementById('storage-widget');
 
 if (storageHost) {
+    storageHost.addEventListener(
+        'click',
+        (event) => {
+            if (
+                event.target instanceof Element &&
+                event.target.closest('[class*="rs-choose-"], .rs-connect, .rs-solid-connect, .rs-lws-connect')
+            ) {
+                sessionStorage.setItem(CONNECTION_INTENT, 'true');
+            }
+        },
+        true,
+    );
     new ResizeObserver(() => {
         document.documentElement.style.setProperty('--storage-control-height', `${storageHost.offsetHeight}px`);
     }).observe(storageHost);
@@ -67,7 +83,16 @@ if (storageHost) {
 
 /** Open after the originating click has passed the widget's outside-click listener. */
 export function openStorage(): void {
-    setTimeout(() => storage.open(), 0);
+    sessionStorage.setItem(CONNECTION_INTENT, 'true');
+    setTimeout(() => {
+        storage.open();
+        if (!storage.rs.connected || Solid.isLoggedIn()) return;
+
+        storage
+            .restore()
+            .then((user) => user && Solid.login(user.webId, { authenticator: 'remotestorage', loading: false }))
+            .catch(showStorageError);
+    }, 0);
 }
 
 export class RemoteStorageAuthenticator extends Authenticator {
@@ -119,7 +144,7 @@ export class RemoteStorageAuthenticator extends Authenticator {
     protected async restoreSession(): Promise<void> {
         const user = await storage.restore();
 
-        if (user) await this.activate(user);
+        if (user && shouldRestoreAccount()) await this.activate(user);
     }
 
     private async activate(user: SolidUserProfile): Promise<AuthSession> {
@@ -144,7 +169,11 @@ export class RemoteStorageAuthenticator extends Authenticator {
 
         this.context = api;
 
-        return this.startSession({ user, loginUrl: user.webId });
+        const session = await this.startSession({ user, loginUrl: user.webId });
+
+        sessionStorage.removeItem(CONNECTION_INTENT);
+
+        return session;
     }
 
 }
@@ -153,6 +182,8 @@ export const authenticator = new RemoteStorageAuthenticator();
 let changingAccount = Promise.resolve();
 
 storage.onUser((user) => {
+    const restored = restoringConnection;
+
     changingAccount = changingAccount
         .then(async () => {
             await Solid.booted;
@@ -163,6 +194,7 @@ storage.onUser((user) => {
                 return;
             }
 
+            if (restored && !shouldRestoreAccount()) return;
             if (await authenticator.connected(user)) return;
             if (Solid.isLoggedIn() && Solid.user.webId === user.webId) return;
 
@@ -170,15 +202,7 @@ storage.onUser((user) => {
 
             await Solid.login(user.webId, { authenticator: 'remotestorage', loading: false });
         })
-        .catch((error: unknown) => {
-            const alert = document.createElement('p');
-
-            alert.setAttribute('role', 'alert');
-            const message = error instanceof Error ? error.message : String(error);
-
-            alert.textContent = `Storage could not be opened: ${message}`;
-            document.getElementById('storage-widget')?.append(alert);
-        });
+        .catch(showStorageError);
 });
 
 declare module '@aerogel/plugin-solid' {
@@ -189,11 +213,25 @@ declare module '@aerogel/plugin-solid' {
 
 /** Restore the widget identity before Cloud chooses its collections or mounts the UI. */
 export async function restoreStorageConnection(): Promise<void> {
-    const user = await storage.restore();
+    try {
+        const user = await storage.restore();
 
-    await changingAccount;
-    if (!user || Solid.isLoggedIn()) return;
+        await changingAccount;
+        if (!user || Solid.isLoggedIn() || !shouldRestoreAccount()) return;
 
-    Solid.setState({ profiles: { ...Solid.profiles, [user.webId]: user } });
-    await Solid.login(user.webId, { authenticator: 'remotestorage', loading: false });
+        Solid.setState({ profiles: { ...Solid.profiles, [user.webId]: user } });
+        await Solid.login(user.webId, { authenticator: 'remotestorage', loading: false });
+    } finally {
+        restoringConnection = false;
+    }
+}
+
+function showStorageError(error: unknown): void {
+    const alert = document.createElement('p');
+
+    alert.setAttribute('role', 'alert');
+    const message = error instanceof Error ? error.message : String(error);
+
+    alert.textContent = `Storage could not be opened: ${message}`;
+    document.getElementById('storage-widget')?.append(alert);
 }

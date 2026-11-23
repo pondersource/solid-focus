@@ -18,3 +18,9 @@ export function connectSolidStorage(): void {
     cy.get('.rs-solid-connect').click();
     cy.solidLogin();
 }
+
+/** The rs.js SDK restores its existing consent rather than asking again on every reload. */
+export function resumeSolidStorage(): void {
+    cy.location('origin', { timeout: 20000 }).should('eq', new URL(Cypress.config('baseUrl') as string).origin);
+    cy.window().its('ponderStorage.rs.connected', { timeout: 20000 }).should('eq', true);
+}

@@ -43,7 +43,7 @@ describe('Onboarding', () => {
         cy.seeActiveList('Inbox');
 
         cy.reload();
-        cy.solidAuthorize();
+        cy.resumeSolidStorage();
         cy.seeActiveWorkspace('Main');
         cy.see('Cook Ramen');
         cy.seeActiveList('Inbox');
@@ -96,7 +96,7 @@ describe('Onboarding', () => {
         cy.seeActiveList('Inbox');
 
         cy.reload();
-        cy.solidAuthorize();
+        cy.resumeSolidStorage();
         cy.seeActiveWorkspace('Work');
         cy.see('Reply to support emails');
         cy.seeActiveList('Inbox');

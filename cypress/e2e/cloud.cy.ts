@@ -357,7 +357,7 @@ describe('Cloud', () => {
         cy.ariaInput('Name').type('勉強{enter}');
         cy.waitSync();
         cy.reload();
-        cy.solidAuthorize();
+        cy.resumeSolidStorage();
         cy.waitSync();
         cy.seeActiveWorkspace('勉強');
 
