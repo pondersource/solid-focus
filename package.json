@@ -17,7 +17,7 @@
         "lint": "noeldemartin-lint src cypress",
         "test": "vitest --run",
         "test:ci": "vitest --run --reporter verbose",
-        "test:serve-app": "VITE_BASE_PATH=/ vite --port 5001 --mode testing",
+        "test:serve-app": "VITE_BASE_PATH=/ vite --host 127.0.0.1 --port 5001 --mode testing",
         "test:serve-pod": "community-solid-server -l warn",
         "test:native": "vitest --run src/storage/tasks.native.test.ts",
         "test:acceptance": "playwright test --config acceptance/playwright.config.cjs"
