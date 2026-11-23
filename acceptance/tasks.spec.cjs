@@ -95,6 +95,9 @@ test('native task creation/edit preserves RDF and is visible to a fresh signed-i
     await page.getByRole('textbox', { name: 'Task name' }).press('Enter');
     await expect(page.getByText(title, { exact: true })).toBeVisible();
     const documentUrl = (await created).url();
+    // The first HTTP write precedes completion of the upstream Cloud sync.
+    // Finish that cycle before introducing an independent external edit.
+    await expect(page.getByText('Online', { exact: true })).toHaveCount(1);
     const original = await snapshot(page, documentUrl);
     expect(original.tasks.find(task => task.name === title).uri).toBe(documentUrl + '#it');
     expect(original.quads.filter(q => q.s === documentUrl + '#it' && q.p.endsWith('#type')).map(q => q.o)).toEqual(
