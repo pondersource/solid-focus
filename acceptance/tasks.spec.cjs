@@ -4,6 +4,8 @@ const pod = provider + '/alice/';
 
 async function connect(page, baseURL) {
     await page.goto(baseURL);
+    await page.getByRole('button', { name: 'Log in', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Connect storage', exact: true }).click();
     await page.locator('.rs-choose-solid').click();
     await page.locator('[name="rs-provider-address"]').fill(provider);
     await page.locator('.rs-solid-connect').click();
@@ -48,7 +50,8 @@ test('complete guest archive survives transfer into a fresh browser without auth
     await page.getByRole('textbox', { name: 'Task name' }).fill('Transfer this complete guest project');
     await page.getByRole('textbox', { name: 'Task name' }).press('Enter');
     await expect(page.getByText('Transfer this complete guest project', { exact: true })).toBeVisible();
-    await page.evaluate(() => window.ponderStorage.open());
+    await page.getByRole('button', { name: 'Configuration', exact: true }).click();
+    await page.getByText('Connect account', { exact: true }).click();
     await page.locator('.rs-choose-nextgraph').click();
     await expect(page.locator('.rs-storage-error')).toContainText('Export your guest projects');
     expect(new URL(page.url()).origin).toBe(new URL(baseURL).origin);

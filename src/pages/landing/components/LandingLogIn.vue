@@ -12,7 +12,7 @@
             </h2>
 
             <div class="mt-4 flex flex-col items-center gap-y-2">
-                <Button @click="storage.open()">
+                <Button @click="openStorage()">
                     Connect storage
                 </Button>
                 <Button
@@ -29,5 +29,5 @@
 </template>
 
 <script setup lang="ts">
-import { storage } from '@/storage';
+import { openStorage } from '@/storage';
 </script>

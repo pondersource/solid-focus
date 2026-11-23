@@ -21,7 +21,7 @@
                     v-if="!$solid.hasLoggedIn()"
                     variant="ghost"
                     class="text-sm"
-                    @click="$ui.modal(AccountLoginModal)"
+                    @click="openStorage()"
                 >
                     {{ $t('notFound.logIn') }}
                 </Button>
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { AccountLoginModal } from '@aerogel/plugin-local-first';
+import { openStorage } from '@/storage';
 
 defineProps<{ langKey: string; langParams?: Record<string, string> }>();
 </script>

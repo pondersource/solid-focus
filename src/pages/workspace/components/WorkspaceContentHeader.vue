@@ -25,12 +25,13 @@
         >
             <i-zondicons-search class="size-5" />
         </Button>
-        <Account />
+        <StorageAccount />
     </div>
 </template>
 
 <script setup lang="ts">
 import { UI } from '@aerogel/core';
+import StorageAccount from '@/components/StorageAccount.vue';
 
 import { watchKeyboardShortcut } from '@/utils/composables';
 

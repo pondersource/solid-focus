@@ -9,8 +9,8 @@
     {{ favicons() }}
         {{ socialMeta({ image: './src/assets/img/banner.png' }) }}
   </head>
-  <body class="font-onest bg-background size-full text-base leading-tight font-normal text-gray-900 antialiased">
-    <div id="app" class="loading h-full"></div>
+  <body class="font-onest bg-background flex size-full flex-col text-base leading-tight font-normal text-gray-900 antialiased">
+    <div id="app" class="loading min-h-0 flex-1 overflow-auto"></div>
     <div id="storage-widget"></div>
     <script src="./storage/remotestorage-all.js"></script>
     <script src="./storage/widget.js"></script>

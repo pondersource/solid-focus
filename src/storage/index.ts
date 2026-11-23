@@ -46,7 +46,7 @@ export const storage = runtime.PonderSourceDomains.connectApp(runtime.PonderSour
     RemoteStorage: runtime.RemoteStorage,
     Widget: runtime.Widget,
     nativeSolid: true,
-    widgetOptions: { guestData },
+    widgetOptions: { guestData, skipInitial: false, leaveOpen: false },
     apiKeys: {
         googledrive: '682507954614-erhifm4fj4dt7ft6duto0smcp54fmi6i.apps.googleusercontent.com',
         dropbox: 'gaezgoax9khjilj',
@@ -54,6 +54,21 @@ export const storage = runtime.PonderSourceDomains.connectApp(runtime.PonderSour
     },
 });
 runtime.ponderStorage = storage;
+
+// The upstream task/sidebar panels are fixed to the viewport. Keep their lower
+// edge above the widget's real layout area as its state and size change.
+const storageHost = document.getElementById('storage-widget');
+
+if (storageHost) {
+    new ResizeObserver(() => {
+        document.documentElement.style.setProperty('--storage-control-height', `${storageHost.offsetHeight}px`);
+    }).observe(storageHost);
+}
+
+/** Open after the originating click has passed the widget's outside-click listener. */
+export function openStorage(): void {
+    setTimeout(() => storage.open(), 0);
+}
 
 export class RemoteStorageAuthenticator extends Authenticator {
 
