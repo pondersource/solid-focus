@@ -1,4 +1,4 @@
-import { podUrl, webId } from '@aerogel/cypress';
+import { podUrl } from '@aerogel/cypress';
 
 describe('Onboarding', () => {
 
@@ -31,8 +31,7 @@ describe('Onboarding', () => {
 
         // Act
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('Cook Ramen{enter}');
         cy.waitSync();
         cy.ariaLabel('Show lists').click();
@@ -81,8 +80,7 @@ describe('Onboarding', () => {
 
         // Act
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.press('Advanced options', 'summary');
         cy.ariaInput('Task name').type('Reply to support emails');
         cy.ariaInput('Workspace name').clear().type('Work');
@@ -144,8 +142,7 @@ describe('Onboarding', () => {
 
         // Act
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Assert
         cy.see('Synchronization in progress');

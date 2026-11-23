@@ -12,6 +12,7 @@ import directives from './components/directives';
 import settings from './components/settings';
 import { globals, services } from './services';
 import { bindings, routes } from './pages';
+import { authenticator, restoreStorageConnection } from './storage';
 
 bootstrap(App, {
     directives,
@@ -21,7 +22,8 @@ bootstrap(App, {
         i18n({ messages: import.meta.glob('@/lang/*.yaml') }),
         soukai({ models: import.meta.glob(['@/models/*', '!**/*.test.ts'], { eager: true }) }),
         routing({ routes, bindings }),
-        solid(),
+        solid({ authenticators: { remotestorage: authenticator }, defaultAuthenticator: 'remotestorage' }),
+        { name: 'pondersource/storage', install: restoreStorageConnection },
         localFirst({ manualSetup: true }),
     ],
     install(app) {

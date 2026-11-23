@@ -1,5 +1,5 @@
 import { escapeRegexText } from '@noeldemartin/utils';
-import { podUrl, webId } from '@aerogel/cypress';
+import { podUrl } from '@aerogel/cypress';
 
 import type Task from '@/models/Task';
 
@@ -13,8 +13,7 @@ describe('Cloud', () => {
     it('Syncs updates', () => {
         // Arrange
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('Sync updates{enter}');
         cy.waitSync();
 
@@ -54,8 +53,7 @@ describe('Cloud', () => {
     it('Syncs deleted tasks', () => {
         // Arrange
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('To delete{enter}');
         cy.waitSync();
 
@@ -103,8 +101,7 @@ describe('Cloud', () => {
     it('Syncs new workspaces and lists', () => {
         // Arrange
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('Sync updates{enter}');
         cy.waitSync();
 
@@ -146,8 +143,7 @@ describe('Cloud', () => {
     it('Syncs list updates', () => {
         // Arrange
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('Hello{enter}');
         cy.waitSync();
 
@@ -196,8 +192,7 @@ describe('Cloud', () => {
         cy.ariaInput('Task name').type('Onboarding task{enter}');
         cy.ariaLabel('Configuration').click();
         cy.press('Connect account');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Act
         cy.see('All your eggs are in the same basket');
@@ -247,8 +242,7 @@ describe('Cloud', () => {
         cy.createStubs();
         cy.ariaLabel('Configuration').click();
         cy.press('Connect account');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Act
         cy.see('All your eggs are in the same basket');
@@ -291,8 +285,7 @@ describe('Cloud', () => {
         cy.createStubs();
         cy.ariaLabel('Configuration').click();
         cy.press('Connect account');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Act
         cy.see('All your eggs are in the same basket');
@@ -313,8 +306,7 @@ describe('Cloud', () => {
         cy.ariaInput('Task name').type('Onboarding task{enter}');
         cy.ariaLabel('Configuration').click();
         cy.press('Connect account');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Act
         cy.see('All your eggs are in the same basket');
@@ -338,8 +330,7 @@ describe('Cloud', () => {
     it('Creates lists with unicode characters', () => {
         // Arrange
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Ideally, we'd test task names with unicode characters as well, but the following causes an
         // issue in CSS using in-memory storage.
@@ -371,8 +362,7 @@ describe('Cloud', () => {
     it('Wipes data on log out', () => {
         // Arrange.
         cy.press('Log in');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
         cy.ariaInput('Task name').type('Testing{enter}');
         cy.waitSync();
 
@@ -406,8 +396,7 @@ describe('Cloud', () => {
 
         // Act
         cy.press('Need to log in?');
-        cy.ariaInput('Login url').type(`${webId()}{enter}`);
-        cy.solidLogin();
+        cy.connectSolidStorage();
 
         // Assert
         cy.url().should('equal', `${Cypress.config('baseUrl')}/main`);
