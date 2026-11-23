@@ -85,7 +85,7 @@ describe('Onboarding', () => {
         cy.ariaInput('Task name').type('Reply to support emails');
         cy.ariaInput('Workspace name').clear().type('Work');
         cy.ariaInput('Workspace url').clear().type(podUrl('/work/'));
-        cy.press('Continue');
+        cy.contains('button', 'Continue').scrollIntoView().click();
         cy.waitSync();
         cy.ariaLabel('Show lists').click();
 
