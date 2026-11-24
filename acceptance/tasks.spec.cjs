@@ -53,7 +53,10 @@ test('complete guest archive survives transfer into a fresh browser without auth
     await page.getByRole('button', { name: 'Configuration', exact: true }).click();
     await page.getByText('Connect account', { exact: true }).click();
     await page.locator('.rs-choose-nextgraph').click();
-    await expect(page.locator('.rs-storage-error')).toContainText('Export your guest projects');
+    await expect(page.locator('[name=rs-nextgraph-wallet]')).toHaveValue('https://nextgraph.net');
+    await page.locator('.rs-nextgraph-connect').click();
+    await expect(page.locator('.rs-nextgraph-error')).toContainText('Export your guest projects');
+    await page.locator('.rs-nextgraph-back').click();
     expect(new URL(page.url()).origin).toBe(new URL(baseURL).origin);
     const download = page.waitForEvent('download');
     await page.locator('.rs-export-guest').click();
