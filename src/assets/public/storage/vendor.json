@@ -13,11 +13,11 @@
   "widget": {
     "status": "merged fork source build; not an npm release",
     "repository": "https://github.com/pondersource/remotestorage-widget",
-    "baseCommit": "4857d1b236d159d9b00c2f18792851cacc70593e",
+    "baseCommit": "14acf28d44851a5984dbfa91ba71e35a5b3a0b79",
     "build": "npm ci && npm run build",
     "artifacts": {
-      "widget.js": "500fb7d0419a8c39c72869d9d37d4c4c2daf4f2e359156c4e1294559e6a9834c",
-      "widget.js.map": "616348c3cb184900857a1991e06ca350e15e0ccbedb636e31253034cd53ec54e",
+      "widget.js": "75eff3c1342f85ca178d3ff34bcd55c1b10d93826f32ed6f1c2d81fc34726c45",
+      "widget.js.map": "b113be91cbdf901eda88c49a607681b39fc4876e613b2b4df7b9843f9018c824",
       "widget.js.LICENSE.txt": "8c9946dfc859a2bfb26cc541125631cd96e7110fa20a702eb19275c9d1658805"
     }
   },
