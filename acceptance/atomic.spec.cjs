@@ -42,7 +42,7 @@ function run(source) {
 }
 
 test('Focus persists tasks in named workspaces and lists in Atomic’s sandbox', async ({ page }) => {
-    const source = readFileSync('../atomic/focus-0.1.0.js', 'utf8');
+    const source = readFileSync(require('node:path').join(__dirname, '../atomic/focus-0.1.0.js'), 'utf8');
     const payload = JSON.stringify(source).replace(/</g, '\\u003c');
     const document = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-demo' blob:; style-src 'unsafe-inline'; font-src data:; img-src data:; connect-src 'none'">
 <div id="root"></div><script type="module" nonce="demo">(${run})(${payload})</script>`;
