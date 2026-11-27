@@ -22,6 +22,7 @@ jobs:
                   cache: 'pnpm'
             - run: pnpm install --frozen-lockfile
             - run: pnpm build
+            - run: cp -R atomic dist/
             - uses: actions/upload-pages-artifact@v3
               with:
                   path: dist
